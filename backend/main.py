@@ -10,6 +10,8 @@ from __future__ import annotations
 
 import asyncio
 import json
+import os
+import shutil
 import threading
 import uuid
 from collections.abc import Mapping
@@ -23,7 +25,7 @@ from pydantic import BaseModel
 
 from core.graph import app as tender_workflow
 from core.graph import gatekeeper_node
-from core.ingest import ingest_company_profile_path, ingest_pdf_path
+from core.ingest import CHROMA_DIR, ingest_pdf_path, run_ingestion
 
 BACKEND_DIR = Path(__file__).resolve().parent
 DATA_DIR = BACKEND_DIR / "data"
@@ -220,6 +222,13 @@ async def api_upload(
     if not tender_bytes or not profile_bytes:
         raise HTTPException(status_code=400, detail="Both PDF files must be non-empty.")
 
+    if os.path.isdir(CHROMA_DIR):
+        shutil.rmtree(os.fspath(CHROMA_DIR), ignore_errors=True)
+
+    for p in (TENDER_DATA, COMPANY_PROFILE_DATA):
+        if p.is_file():
+            p.unlink(missing_ok=True)
+
     TENDER_DATA.write_bytes(tender_bytes)
     COMPANY_PROFILE_DATA.write_bytes(profile_bytes)
 
@@ -248,8 +257,7 @@ def api_generate(body: RunBody) -> dict[str, Any]:
         )
 
     try:
-        ingest_pdf_path(TENDER_DATA)
-        ingest_company_profile_path(COMPANY_PROFILE_DATA)
+        run_ingestion()
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc)) from exc
 

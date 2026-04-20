@@ -1,4 +1,5 @@
 import os
+import shutil
 import sys
 from pathlib import Path
 
@@ -95,6 +96,19 @@ def ingest_pdf_path(
 def ingest_company_profile_path(pdf_path: Path) -> tuple[int, int]:
     """Embed company profile into the company_vault Chroma collection."""
     return ingest_pdf_path(pdf_path, collection_name=COMPANY_VAULT_COLLECTION)
+
+
+def run_ingestion() -> tuple[tuple[int, int], tuple[int, int]]:
+    """
+    Build a fresh vector index: tender → `tender` collection, company profile → `company_vault`.
+    Removes any existing persist directory first so Chroma is empty before embedding (no memory bleed
+    between runs). `Chroma.from_documents` then creates a new on-disk store and both collections.
+    """
+    if CHROMA_DIR.is_dir():
+        shutil.rmtree(CHROMA_DIR, ignore_errors=True)
+    tender_stats = ingest_pdf_path(DATA_FILE, collection_name=TENDER_COLLECTION)
+    company_stats = ingest_company_profile_path(COMPANY_PROFILE_DATA)
+    return tender_stats, company_stats
 
 
 def ingest() -> None:
