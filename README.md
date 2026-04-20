@@ -83,6 +83,8 @@ git clone https://github.com/muhaddasgujjar/tenderforge-pk.git
 cd tenderforge-pk
 ```
 
+If you have not renamed the GitHub repository yet, use your current repo URL (for example `langchain_project`) until you complete the rename below.
+
 Copy the backend env template and add your key:
 
 ```bash
@@ -163,15 +165,18 @@ tenderforge-pk/
 
 This project is intended to live under the name **`tenderforge-pk`**.
 
-1. On GitHub: **Settings → General → Repository name** → set to **`tenderforge-pk`** (or create a new repository with that name and push).
-2. Update your local remote:
+1. On GitHub open the repo → **Settings → General → Repository name** → change to **`tenderforge-pk`** → **Rename**. (GitHub will redirect the old URL for a while.)
+2. Point your local `origin` at the new URL and push:
 
    ```bash
    git remote set-url origin https://github.com/muhaddasgujjar/tenderforge-pk.git
+   git remote -v
    git push -u origin main
    ```
 
 Replace `muhaddasgujjar` with your GitHub username if different.
+
+If you prefer a **new empty repo** named `tenderforge-pk` instead of renaming, create it on GitHub, then use the same `git remote set-url` and push.
 
 ---
 
