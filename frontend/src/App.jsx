@@ -8,7 +8,7 @@ import { Sidebar } from './components/layout/Sidebar.jsx'
 import { Card } from './components/ui/Card.jsx'
 import { PrimaryButton } from './components/ui/PrimaryButton.jsx'
 import { UploadSection } from './features/UploadSection.jsx'
-import { AgentTheater } from './features/AgentTheater.jsx'
+import { GenerationStatus } from './features/GenerationStatus.jsx'
 import { ResultSection } from './features/ResultSection.jsx'
 import { WORKFLOW, useTenderEngine } from './hooks/useTenderEngine.js'
 
@@ -43,7 +43,7 @@ export default function App() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="fixed inset-0 z-[200] bg-slate-900/50 backdrop-blur-[2px] lg:hidden"
+              className="fixed inset-0 z-[200] bg-tf-navy-950/40 backdrop-blur-sm lg:hidden"
               aria-label="Close navigation"
               onClick={() => setMobileNavOpen(false)}
             />
@@ -51,25 +51,25 @@ export default function App() {
               key="nav-drawer"
               role="dialog"
               aria-modal="true"
-              aria-label="Workspace"
+              aria-label="Highlights"
               initial={{ x: '-105%' }}
               animate={{ x: 0 }}
               exit={{ x: '-105%' }}
               transition={{ type: 'tween', duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
-              className="fixed left-0 top-0 z-[201] flex h-full max-h-[100dvh] w-[min(20rem,calc(100vw-2rem))] flex-col border-r border-tf-border bg-tf-surface shadow-tf-lg lg:hidden"
+              className="fixed left-0 top-0 z-[201] flex h-full max-h-[100dvh] w-[min(20rem,calc(100vw-2rem))] flex-col border-r border-tf-border bg-white shadow-[8px_0_32px_-8px_rgba(15,23,42,0.15)] lg:hidden"
             >
               <div className="flex shrink-0 items-center justify-between border-b border-tf-border px-4 py-3">
-                <span className="text-sm font-semibold text-tf-text">Workspace</span>
+                <span className="font-display text-sm font-semibold text-tf-text">TenderForge</span>
                 <button
                   type="button"
-                  className="flex size-11 items-center justify-center rounded-lg border border-tf-border bg-tf-elevated hover:bg-white"
+                  className="flex size-11 items-center justify-center rounded-xl border border-tf-border bg-tf-elevated hover:bg-white"
                   aria-label="Close menu"
                   onClick={() => setMobileNavOpen(false)}
                 >
                   <X className="size-5" aria-hidden />
                 </button>
               </div>
-              <Sidebar className="w-full flex-1 overflow-y-auto overscroll-contain border-0" />
+              <Sidebar className="w-full flex-1 overflow-y-auto overscroll-contain border-0 bg-white" />
             </motion.div>
           </>
         ) : null}
@@ -81,7 +81,7 @@ export default function App() {
   const showValidationFailed = engine.workflowState === WORKFLOW.VALIDATION_FAILED
 
   return (
-    <div className="flex min-h-svh flex-col bg-gradient-to-b from-tf-canvas to-slate-100/80">
+    <div className="flex min-h-svh flex-col bg-gradient-to-b from-slate-100 via-tf-canvas to-slate-200/90">
       <AppHeader onMobileNavOpen={() => setMobileNavOpen(true)} />
 
       <div className="relative z-0 flex flex-1 overflow-x-hidden">
@@ -90,7 +90,7 @@ export default function App() {
         </div>
         {mobileDrawer}
 
-        <main className="relative z-0 mx-auto w-full max-w-5xl flex-1 flex-col px-4 py-8 sm:px-6 sm:py-10 lg:py-12">
+        <main className="relative z-0 mx-auto w-full max-w-6xl flex-1 flex-col px-4 py-10 sm:px-8 sm:py-14 lg:max-w-none lg:flex-1 lg:px-12 xl:max-w-[1400px] xl:px-16">
           <AnimatePresence>
             {showValidationFailed ? (
               <motion.div
@@ -98,20 +98,21 @@ export default function App() {
                 initial={{ opacity: 0, y: -8 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
-                className="mb-8"
+                className="mb-10"
               >
-                <div className="overflow-hidden rounded-2xl border-2 border-amber-600/80 bg-gradient-to-br from-red-50 via-amber-50 to-amber-100/90 shadow-tf-lg ring-1 ring-red-200/60">
-                  <div className="flex flex-col gap-4 p-6 sm:p-8">
+                <div className="overflow-hidden rounded-2xl border border-amber-700/40 bg-gradient-to-br from-red-950/90 via-red-900/95 to-tf-navy-950 px-6 py-8 shadow-[0_24px_48px_-12px_rgba(127,29,29,0.35)] sm:px-10">
+                  <div className="flex flex-col gap-6">
                     <div className="flex items-start gap-4">
-                      <span className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-red-600 text-white shadow-md">
+                      <span className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-white/15 text-white ring-1 ring-white/20">
                         <AlertTriangle className="size-7" aria-hidden />
                       </span>
                       <div className="min-w-0 flex-1">
-                        <h3 className="text-xl font-extrabold leading-tight text-red-950 sm:text-2xl">
-                          Validation Failed: Invalid Documents Detected
+                        <h3 className="font-display text-xl font-semibold leading-tight text-white sm:text-2xl">
+                          Validation failed — documents not accepted
                         </h3>
-                        <p className="mt-3 break-words text-sm leading-relaxed text-red-950/90 sm:text-base">
-                          {engine.rejectionReason || 'The gatekeeper could not accept these files as a valid tender and company profile pair.'}
+                        <p className="mt-3 break-words text-sm leading-relaxed text-slate-200 sm:text-base">
+                          {engine.rejectionReason ||
+                            'The authenticity check could not validate this tender and company profile pair.'}
                         </p>
                       </div>
                     </div>
@@ -119,10 +120,10 @@ export default function App() {
                       <PrimaryButton
                         type="button"
                         variant="secondary"
-                        className="min-h-12 w-full max-w-sm font-semibold sm:w-auto"
+                        className="min-h-12 w-full max-w-sm rounded-xl border-white/20 bg-white font-semibold text-tf-navy-950 hover:bg-slate-100 sm:w-auto"
                         onClick={() => engine.reset()}
                       >
-                        Reset and Upload New Documents
+                        Start over with new files
                       </PrimaryButton>
                     </div>
                   </div>
@@ -135,20 +136,20 @@ export default function App() {
                 initial={{ opacity: 0, y: -8 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
-                className="mb-8"
+                className="mb-10"
               >
-                <Card className="border-red-200 bg-red-50/95">
+                <Card className="rounded-2xl border-red-200/90 bg-red-50/95 shadow-tf-md">
                   <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                     <div className="min-w-0">
-                      <p className="text-xs font-semibold uppercase tracking-wider text-red-800">
-                        Something went wrong
+                      <p className="font-display text-xs font-semibold uppercase tracking-wider text-red-900">
+                        Connection issue
                       </p>
-                      <p className="mt-1 break-words text-sm font-medium text-red-900">
+                      <p className="mt-2 break-words text-sm font-medium text-red-950">
                         {engine.errorMessage}
                       </p>
-                      <p className="mt-2 text-xs text-red-800/90">
-                        Start the API:{' '}
-                        <code className="break-all rounded bg-white/80 px-1 py-0.5 font-mono text-[11px]">
+                      <p className="mt-3 text-xs text-red-900/85">
+                        Ensure the API is running:{' '}
+                        <code className="break-all rounded-lg bg-white/90 px-2 py-1 font-mono text-[11px] text-red-950">
                           cd backend && uvicorn main:app --reload --port 8000
                         </code>
                       </p>
@@ -156,10 +157,10 @@ export default function App() {
                     <PrimaryButton
                       type="button"
                       variant="secondary"
-                      className="shrink-0"
+                      className="shrink-0 rounded-xl"
                       onClick={() => engine.reset()}
                     >
-                      Try again
+                      Retry
                     </PrimaryButton>
                   </div>
                 </Card>
@@ -167,7 +168,7 @@ export default function App() {
             ) : null}
           </AnimatePresence>
 
-          <div className="flex flex-col gap-12 sm:gap-16 lg:gap-20">
+          <div className="mx-auto flex w-full max-w-4xl flex-col gap-12 lg:max-w-none lg:gap-16">
             <UploadSection
               workflowState={engine.workflowState}
               tenderFile={engine.tenderFile}
@@ -178,12 +179,7 @@ export default function App() {
               onAnalyze={() => engine.analyzeProposal()}
             />
 
-            <AgentTheater
-              workflowState={engine.workflowState}
-              pdfLoaded={engine.pdfLoaded}
-              activeAgent={engine.activeAgent}
-              revisionCount={engine.revisionCount}
-            />
+            <GenerationStatus workflowState={engine.workflowState} logs={engine.logs} />
 
             <ResultSection
               workflowState={engine.workflowState}
@@ -195,9 +191,14 @@ export default function App() {
             />
 
             {engine.workflowState === WORKFLOW.SUCCESS_REVIEW ? (
-              <div className="flex justify-center pb-8">
-                <PrimaryButton type="button" variant="secondary" onClick={() => engine.reset()}>
-                  Analyze another tender
+              <div className="flex justify-center pb-10">
+                <PrimaryButton
+                  type="button"
+                  variant="secondary"
+                  className="rounded-xl px-8 py-3 font-semibold"
+                  onClick={() => engine.reset()}
+                >
+                  New tender run
                 </PrimaryButton>
               </div>
             ) : null}

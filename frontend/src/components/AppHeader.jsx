@@ -1,18 +1,15 @@
 import { motion } from 'framer-motion'
-import { ShieldCheck } from 'lucide-react'
+import { Hexagon } from 'lucide-react'
 
-/**
- * Section A — brand + trustworthy “Private & Local AI” status.
- */
 export function AppHeader({ onMobileNavOpen }) {
   return (
-    <header className="sticky top-0 z-50 border-b border-tf-border bg-tf-surface/95 backdrop-blur-md">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
+    <header className="sticky top-0 z-50 border-b border-tf-border/90 bg-tf-navy-950/98 shadow-[0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-xl">
+      <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-4 px-4 py-3.5 sm:px-6">
         <div className="flex min-w-0 flex-1 items-center gap-3 sm:gap-4">
           {typeof onMobileNavOpen === 'function' ? (
             <button
               type="button"
-              className="flex size-11 shrink-0 items-center justify-center rounded-xl border border-tf-border bg-tf-elevated text-tf-navy-900 shadow-tf-sm hover:bg-white lg:hidden"
+              className="flex size-11 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-white shadow-tf-sm transition-colors hover:bg-white/10 lg:hidden"
               aria-label="Open menu"
               onClick={onMobileNavOpen}
             >
@@ -22,32 +19,32 @@ export function AppHeader({ onMobileNavOpen }) {
               </svg>
             </button>
           ) : null}
-          <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-tf-navy-950 text-white shadow-tf-md">
-            <ShieldCheck className="size-6" aria-hidden />
+          <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-white/15 to-white/5 text-white shadow-lg ring-1 ring-white/20">
+            <Hexagon className="size-6" strokeWidth={1.6} aria-hidden />
           </div>
           <div className="min-w-0">
-            <h1 className="truncate text-lg font-bold tracking-tight text-tf-text sm:text-xl">
+            <h1 className="font-display truncate text-lg font-semibold tracking-tight text-white sm:text-xl">
               TenderForge PK
             </h1>
-            <p className="truncate text-xs text-tf-muted sm:text-sm">
-              Government tender compliance — private & local
+            <p className="truncate text-xs text-slate-400 sm:text-sm">
+              Enterprise tender desk · Private deployment
             </p>
           </div>
         </div>
 
-        <div className="flex shrink-0 items-center gap-2 rounded-full border border-tf-border bg-white px-3 py-1.5 shadow-tf-sm sm:gap-3 sm:px-4 sm:py-2">
+        <div className="flex shrink-0 items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 sm:gap-3 sm:px-4 sm:py-2">
           <span className="relative flex size-2.5 sm:size-3">
             <motion.span
-              className="absolute inline-flex size-full rounded-full bg-emerald-500 opacity-75"
-              animate={{ scale: [1, 1.4, 1], opacity: [0.7, 0, 0.7] }}
-              transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+              className="absolute inline-flex size-full rounded-full bg-emerald-400 opacity-75"
+              animate={{ scale: [1, 1.35, 1], opacity: [0.75, 0, 0.75] }}
+              transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
             />
-            <span className="relative inline-flex size-2.5 rounded-full bg-emerald-500 sm:size-3" />
+            <span className="relative inline-flex size-2.5 rounded-full bg-emerald-400 sm:size-3" />
           </span>
-          <span className="hidden text-xs font-semibold text-tf-slate-800 sm:inline sm:text-sm">
-            Private & Local AI
+          <span className="hidden text-xs font-medium text-slate-200 sm:inline sm:text-sm">
+            Engine ready
           </span>
-          <span className="text-xs font-semibold text-tf-slate-800 sm:hidden">Local AI</span>
+          <span className="text-xs font-medium text-slate-200 sm:hidden">Ready</span>
         </div>
       </div>
     </header>

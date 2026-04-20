@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { Building2, FileText, Loader2 } from 'lucide-react'
+import { Building2, CheckCircle2, FileText, Loader2, Sparkles } from 'lucide-react'
 
 import { WORKFLOW } from '../hooks/useTenderEngine.js'
 import { PrimaryButton } from '../components/ui/PrimaryButton.jsx'
@@ -9,17 +9,14 @@ function analyzeButtonLabel(workflowState) {
     case WORKFLOW.UPLOADING:
       return 'Uploading…'
     case WORKFLOW.VECTORIZING:
-      return 'Indexing documents…'
+      return 'Preparing index…'
     case WORKFLOW.AGENT_LOOP:
-      return 'Analyzing…'
+      return 'Generating…'
     default:
-      return 'Analyze & Generate Proposal'
+      return 'Generate technical proposal'
   }
 }
 
-/**
- * Dual upload: government tender + company profile; CTA requires both PDFs.
- */
 export function UploadSection({
   workflowState,
   tenderFile,
@@ -43,120 +40,120 @@ export function UploadSection({
     <section className="mx-auto w-full max-w-4xl">
       <motion.div
         layout
-        className="rounded-2xl border border-tf-border bg-white p-6 shadow-tf-lg sm:p-10"
+        className="relative overflow-hidden rounded-3xl border border-tf-border/90 bg-gradient-to-b from-white via-white to-tf-elevated/80 p-[1px] shadow-[0_24px_60px_-16px_rgba(15,23,42,0.14)]"
       >
-        <p className="text-center text-xs font-semibold uppercase tracking-wider text-tf-muted">
-          Step 1
-        </p>
-        <h2 className="mt-2 text-center text-xl font-bold text-tf-text sm:text-2xl">
-          Upload tender &amp; company profile
-        </h2>
-        <p className="mx-auto mt-2 max-w-2xl text-center text-sm text-tf-text-secondary">
-          Two PDFs: the public tender and your company credentials. Files are sent to your local
-          API only — no third-party cloud in this setup.
-        </p>
+        <div className="rounded-[calc(1.5rem-1px)] bg-white px-6 py-10 sm:px-10 sm:py-12">
+          <div className="mx-auto max-w-2xl text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="inline-flex items-center gap-2 rounded-full border border-tf-border bg-tf-elevated/80 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-tf-muted"
+            >
+              <Sparkles className="size-3.5 text-tf-navy-700" aria-hidden />
+              Proposal intelligence
+            </motion.div>
+            <h2 className="font-display mt-5 text-balance text-3xl font-semibold tracking-tight text-tf-text sm:text-4xl">
+              Win public-sector bids with structured rigor
+            </h2>
+            <p className="mx-auto mt-4 max-w-xl text-pretty text-base leading-relaxed text-tf-text-secondary sm:text-lg">
+              Pair the solicitation with your corporate profile. TenderForge aligns requirements to
+              evidence, screens authenticity, and delivers an executive-ready Word proposal — all
+              through your own backend.
+            </p>
+          </div>
 
-        <div className="mt-8 grid gap-6 sm:grid-cols-2">
-          {/* Zone A — Tender */}
-          <label
-            className={`relative flex min-h-[200px] flex-col items-center justify-center rounded-2xl border-2 border-dashed border-tf-border-strong bg-tf-elevated px-4 py-8 transition-colors hover:border-tf-navy-700 hover:bg-white ${
-              processing ? 'pointer-events-none opacity-70' : 'cursor-pointer'
-            }`}
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={(e) => {
-              e.preventDefault()
-              if (processing) return
-              const f = e.dataTransfer.files?.[0]
-              if (f?.type === 'application/pdf') onTenderFileChange?.(f)
-            }}
-          >
-            <input
-              type="file"
-              accept="application/pdf"
-              className="sr-only"
-              disabled={processing || disabled}
-              onChange={(e) => {
-                const f = e.target.files?.[0]
-                if (f) onTenderFileChange?.(f)
-              }}
+          <div className="mt-10 grid gap-5 sm:grid-cols-2 sm:gap-6">
+            <DropZone
+              processing={processing}
+              disabled={disabled}
+              icon={FileText}
+              title="Government tender"
+              subtitle="Official RFP / tender notice (PDF)"
+              file={tenderFile}
+              onPick={onTenderFileChange}
             />
-            <span className="flex size-14 items-center justify-center rounded-2xl bg-white shadow-tf-md ring-1 ring-tf-border">
-              <FileText className="size-7 text-tf-navy-900" aria-hidden />
-            </span>
-            <p className="mt-3 text-center text-sm font-semibold leading-tight text-tf-text">
-              Upload Government Tender (PDF)
-            </p>
-            <p className="mt-1 text-center text-xs text-tf-muted">Drag &amp; drop or click</p>
-            {tenderFile ? (
-              <p className="mt-3 w-full truncate px-1 text-center text-xs font-medium text-tf-navy-900">
-                {tenderFile.name}
-              </p>
-            ) : null}
-          </label>
-
-          {/* Zone B — Company profile */}
-          <label
-            className={`relative flex min-h-[200px] flex-col items-center justify-center rounded-2xl border-2 border-dashed border-tf-border-strong bg-tf-elevated px-4 py-8 transition-colors hover:border-tf-navy-700 hover:bg-white ${
-              processing ? 'pointer-events-none opacity-70' : 'cursor-pointer'
-            }`}
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={(e) => {
-              e.preventDefault()
-              if (processing) return
-              const f = e.dataTransfer.files?.[0]
-              if (f?.type === 'application/pdf') onProfileFileChange?.(f)
-            }}
-          >
-            <input
-              type="file"
-              accept="application/pdf"
-              className="sr-only"
-              disabled={processing || disabled}
-              onChange={(e) => {
-                const f = e.target.files?.[0]
-                if (f) onProfileFileChange?.(f)
-              }}
+            <DropZone
+              processing={processing}
+              disabled={disabled}
+              icon={Building2}
+              title="Company profile"
+              subtitle="Credentials, PEC, track record (PDF)"
+              file={profileFile}
+              onPick={onProfileFileChange}
             />
-            <span className="flex size-14 items-center justify-center rounded-2xl bg-white shadow-tf-md ring-1 ring-tf-border">
-              <Building2 className="size-7 text-tf-navy-900" aria-hidden />
-            </span>
-            <p className="mt-3 text-center text-sm font-semibold leading-tight text-tf-text">
-              Upload Company Profile &amp; Tech Stack (PDF)
-            </p>
-            <p className="mt-1 text-center text-xs text-tf-muted">Drag &amp; drop or click</p>
-            {profileFile ? (
-              <p className="mt-3 w-full truncate px-1 text-center text-xs font-medium text-tf-navy-900">
-                {profileFile.name}
-              </p>
-            ) : null}
-          </label>
-        </div>
+          </div>
 
-        <div className="mt-8 flex flex-col items-center gap-3">
-          <PrimaryButton
-            type="button"
-            disabled={analyzeDisabled}
-            className="min-h-14 w-full max-w-md px-8 py-4 text-base font-bold shadow-tf-md sm:min-h-[3.5rem] sm:text-lg"
-            onClick={() => {
-              if (canClickAnalyze) onAnalyze?.()
-            }}
-          >
-            {processing ? (
-              <>
-                <Loader2 className="size-5 shrink-0 animate-spin" aria-hidden />
-                {analyzeButtonLabel(workflowState)}
-              </>
-            ) : (
-              analyzeButtonLabel(workflowState)
-            )}
-          </PrimaryButton>
-          {!hasBoth && idle ? (
-            <p className="text-center text-xs text-tf-muted">
-              Upload both PDFs above to enable analysis.
-            </p>
-          ) : null}
+          <div className="mt-10 flex flex-col items-center gap-4">
+            <PrimaryButton
+              type="button"
+              disabled={analyzeDisabled}
+              className="min-h-14 w-full max-w-md rounded-xl px-8 py-4 text-base font-semibold shadow-[0_12px_28px_-8px_rgba(12,30,60,0.45)] sm:min-h-[3.25rem] sm:text-lg"
+              onClick={() => {
+                if (canClickAnalyze) onAnalyze?.()
+              }}
+            >
+              {processing ? (
+                <>
+                  <Loader2 className="size-5 shrink-0 animate-spin" aria-hidden />
+                  {analyzeButtonLabel(workflowState)}
+                </>
+              ) : (
+                analyzeButtonLabel(workflowState)
+              )}
+            </PrimaryButton>
+            {!hasBoth && idle ? (
+              <p className="text-center text-sm text-tf-muted">Select both PDFs to continue.</p>
+            ) : null}
+          </div>
         </div>
       </motion.div>
     </section>
+  )
+}
+
+function DropZone({ processing, disabled, icon: Icon, title, subtitle, file, onPick }) {
+  return (
+    <label
+      className={`group relative flex min-h-[220px] cursor-pointer flex-col justify-between rounded-2xl border-2 border-dashed border-tf-border-strong bg-tf-elevated/50 p-6 transition-all duration-200 hover:border-tf-navy-700/60 hover:bg-white hover:shadow-tf-md ${
+        processing ? 'pointer-events-none opacity-60' : ''
+      }`}
+      onDragOver={(e) => e.preventDefault()}
+      onDrop={(e) => {
+        e.preventDefault()
+        if (processing) return
+        const f = e.dataTransfer.files?.[0]
+        if (f?.type === 'application/pdf') onPick?.(f)
+      }}
+    >
+      <input
+        type="file"
+        accept="application/pdf"
+        className="sr-only"
+        disabled={processing || disabled}
+        onChange={(e) => {
+          const f = e.target.files?.[0]
+          if (f) onPick?.(f)
+        }}
+      />
+      <div className="flex items-start justify-between gap-3">
+        <span className="flex size-12 items-center justify-center rounded-2xl bg-white shadow-tf-md ring-1 ring-tf-border transition-transform duration-200 group-hover:scale-[1.03]">
+          <Icon className="size-6 text-tf-navy-900" aria-hidden />
+        </span>
+        {file ? (
+          <CheckCircle2 className="size-6 shrink-0 text-emerald-600" aria-hidden />
+        ) : null}
+      </div>
+      <div>
+        <p className="font-display text-base font-semibold text-tf-text">{title}</p>
+        <p className="mt-1 text-sm text-tf-muted">{subtitle}</p>
+        {file ? (
+          <p className="mt-4 truncate rounded-lg bg-white/90 px-3 py-2 text-xs font-medium text-tf-navy-900 ring-1 ring-tf-border">
+            {file.name}
+          </p>
+        ) : (
+          <p className="mt-4 text-xs font-medium text-tf-navy-700/80">Drop file or browse</p>
+        )}
+      </div>
+    </label>
   )
 }
